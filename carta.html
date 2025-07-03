@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cartinha</title>
+    <link rel="stylesheet" href="carta.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E%F0%9F%92%96%3C/text%3E%3C/svg%3E">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .carta-caixa {
+            background-color: #ffeb3b; /* Amarelo pastel */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .hearts-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('caminho/para/sua/imagem-de-coracao.png');
+            background-size: cover;
+            z-index: -1;
+        }
+        .envelope {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            margin: 0 auto;
+            cursor: pointer;
+        }
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 100px solid #FDFD96;
+            border-bottom: none;
+            background: none;
+            border-radius: 0;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            z-index: 3;
+            transform-origin: top center;
+            transform: rotateX(0deg) perspective(600px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+            transition: transform 0.7s cubic-bezier(.77,0,.18,1), box-shadow 0.7s;
+        }
+        .envelope.open .envelope-flap {
+            transform: rotateX(-120deg) perspective(600px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .envelope-front {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #FDFD96;
+            border: 2px solid #000;
+            border-radius: 8px;
+            z-index: 1;
+        }
+        .envelope-letter {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 180px;
+            max-width: 90vw;
+            width: auto;
+            height: auto;
+            background-color: #fff;
+            border: 1.5px solid #bbb;
+            border-radius: 6px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+            display: none;
+            justify-content: center;
+            align-items: flex-start;
+            z-index: 2;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.95);
+            transition: opacity 0.5s, transform 0.7s cubic-bezier(.77,0,.18,1);
+            overflow: hidden;
+            padding: 0;
+        }
+        .envelope-letter .letter-content {
+            width: 100%;
+            min-width: 160px;
+            max-width: 320px;
+            padding: 18px 12px 12px 12px;
+            box-sizing: border-box;
+            margin: 0 auto;
+        }
+        .envelope-letter .letter-content h2 {
+            font-size: 1.2rem;
+            margin: 0 0 20px 0;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            padding-top: 0;
+            font-style: italic;
+            font-family: 'Dancing Script', cursive;
+        }
+        .envelope-letter .letter-content::before {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 0; right: 0; top: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent,
+                transparent 18px,
+                #f3f3f3 19px,
+                transparent 20px
+            );
+            pointer-events: none;
+            z-index: 0;
+        }
+        .envelope-letter .letter-content > * {
+            position: relative;
+            z-index: 1;
+        }
+        @keyframes cartaSaindo {
+            0% {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95) rotate(0deg);
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(-60px) scale(1.05) rotate(-2deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(-120px) scale(1.05) rotate(0deg);
+            }
+        }
+        .envelope-letter.show-paper {
+            display: flex;
+            opacity: 1;
+            animation: cartaSaindo 0.5s cubic-bezier(.77,0,.18,1) forwards;
+        }
+        @keyframes cartaEntrando {
+            0% {
+                opacity: 1;
+                transform: translateY(-120px) scale(1.05) rotate(0deg);
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(-60px) scale(1.05) rotate(2deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95) rotate(0deg);
+            }
+        }
+        .envelope-letter.hide-paper {
+            animation: cartaEntrando 0.5s cubic-bezier(.77,0,.18,1) forwards;
+        }
+        .letter-content {
+            padding: 20px;
+            text-align: center;
+        }
+        @media (max-width: 500px) {
+            .envelope {
+                width: 95vw;
+                height: 48vw;
+                min-width: 220px;
+                min-height: 140px;
+                max-width: 98vw;
+                max-height: 60vw;
+            }
+            .envelope-flap {
+                left: 0;
+                border-left: 47.5vw solid transparent;
+                border-right: 47.5vw solid transparent;
+                border-top: 16vw solid #FDFD96;
+            }
+            .envelope-front {
+                border-radius: 6px;
+            }
+            .envelope-letter {
+                width: 70vw;
+                height: 99vw;
+                min-width: 120px;
+                min-height: 170px;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%) scale(0.95);
+                border-radius: 4px;
+                font-size: 0.95rem;
+            }
+            .envelope-letter .letter-content {
+                padding: 12px 6px 8px 6px;
+            }
+            .envelope-letter .letter-content h2 {
+                font-size: 1rem;
+                margin-bottom: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts-bg"></div>
+    <div class="envelope" id="envelope">
+        <div class="envelope-flap"></div>
+        <div class="envelope-front"></div>
+        <div class="envelope-letter" id="envelope-letter">
+            <div class="letter-content">
+                <!-- Conteúdo da carta pode ser personalizado aqui -->
+                <h2>O porquê eu te amo</h2>
+                <p>Eu te amo porque você me faz bem.<br>
+                Eu te amo porque amo estar com você, assim como amo seus olhos e o seu sorriso.<br>
+                Eu te amo por sempre poder contar com você quando preciso.<br>
+                Eu te amo por você ser você.<br>
+                <span style="font-size:1.5em; color:#e25555;">&#10084;&#65039;</span></p>
+                <p style="text-align:center; margin-top: 18px; font-family: 'Dancing Script', cursive; font-size: 1.1em; color: #b36b00; letter-spacing: 1px;">Jefferson&amp;Marcelle</p>
+            </div>
+        </div>
+    </div>
+    <script src="carta.js"></script>
+</body>
+</html>
